@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en-us" ng:app='possedarts'>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title></title>
+  <meta name="description" content="">
+  
+  <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+  <script type="text/javascript" src="/js/angular-0.10.6.min.js"></script>
+  <script type="text/javascript" src="/js/main.js"></script>
+  <!-- <link rel="stylesheet" href="css/style.css"> -->
+</head>
+<body>
+  <header>
+
+  </header>
+  <div role="main">
+    {{greetings}}
+    <div ng:controller="ScoreEntryCtrl">
+      <form ng:submit="submitScores()">
+        <ul class="score-entry">
+          <li ng:repeat="player in players">
+            <span ng:bind="player.name"></span>
+            <input type="text" ng:model="player.newScore">
+          </li>
+        </ul>
+        <input type="submit">
+      </form>
+    </div>
+  </div>
+  <footer>
+
+  </footer>
+</body>
+</html>
