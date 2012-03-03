@@ -45,7 +45,7 @@
             <input type="text" ng:model="player.newScore">
           </li>
         </ul>
-        <input type="submit" ng:disabled="players.length == 0">
+        <input type="submit" ng:disabled="{% templatetag openvariable %} players.length == 0 {% templatetag closevariable %}">
       </form>
     </div>
     
