@@ -10,7 +10,7 @@ import datetime
 
 
 class PlayersListHandler(webapp.RequestHandler):
-  DEFAULT_PLAYER_NAMES = ["Bill", "Tom", "George"]
+  DEFAULT_PLAYER_NAMES = ["Player 1", "Player 2"]
   def get(self):
     # Create default players if none exist
     q = db.Query(Player)
@@ -53,8 +53,9 @@ class PlayerStatsHandler(webapp.RequestHandler):
     date14DaysAgo = datetime.datetime.now() - datetime.timedelta(days=14)
     results = player.scores.filter('date >=', date14DaysAgo)
     scores = [s.points for s in results]
-    stats['max-14-day'] = max(scores)
-    stats['mean-14-day'] = sum(scores)/len(scores)
+    if len(scores) > 0:
+      stats['max-14-day'] = max(scores)
+      stats['mean-14-day'] = sum(scores)/len(scores)
     
     self.response.out.write(json.dumps(stats));
 

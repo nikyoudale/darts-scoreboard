@@ -55,11 +55,14 @@ function(PlayerScore, PlayerStats) {
 function MainCtrl(Player, PlayerScoresService) {
   var thisCtrl = this;
   
+  this._loading = true;
+  
   this.players = Player.getAll({}, function() {
     $.each(thisCtrl.players, function(index, player) {
       PlayerScoresService.refreshPlayerScores(player.id);
       PlayerScoresService.refreshPlayerStats(player.id);
     });
+    thisCtrl._loading = false;
   });
 }
 MainCtrl.$inject = ['Player', 'PlayerScoresService'];
