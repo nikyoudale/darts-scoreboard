@@ -23,16 +23,32 @@ possedartsModule.factory('PlayerScoresService', ['PlayerScore', 'PlayerStats',
 function(PlayerScore, PlayerStats) {
   var scoresByPlayerId = {};
   var statsByPlayerId = {};
+  var waitingRequestCount = 0;
   
   return {
+    submitScore: function(playerId, points, callbackFn) {
+      waitingRequestCount++;
+      PlayerScore.submitNew({'playerId' : playerId, 'score' : points},
+        function() {
+          if (callbackFn) {
+            callbackFn();
+          }
+          waitingRequestCount--;
+        },
+        function() { waitingRequestCount--; } // error
+      );
+    },
     playerScores: function(playerId) {
       return scoresByPlayerId[playerId];
     },
     refreshPlayerScores: function(playerId) {
+      waitingRequestCount++;
       var scoresList = PlayerScore.list({'playerId' : playerId, 'max' : 10},
         function() {
           scoresByPlayerId[playerId] = scoresList;
-        }
+          waitingRequestCount--;
+        },
+        function() { waitingRequestCount--; } // error
       );
     },
     getPlayerStat: function(playerId, stat) {
@@ -42,11 +58,17 @@ function(PlayerScore, PlayerStats) {
       return undefined;
     },
     refreshPlayerStats: function(playerId) {
+      waitingRequestCount++;
       var stats = PlayerStats.getAll({'playerId' : playerId},
         function() {
           statsByPlayerId[playerId] = stats;
-        }
+          waitingRequestCount--;
+        },
+        function() { waitingRequestCount--; } // error
       );
+    },
+    isLoading: function() {
+      return waitingRequestCount != 0;
     }
   }
 }]);
@@ -64,6 +86,10 @@ function MainCtrl(Player, PlayerScoresService) {
     });
     thisCtrl._loading = false;
   });
+  
+  this.isPeformingRequest = function() {
+    return PlayerScoresService.isLoading();
+  }
 }
 MainCtrl.$inject = ['Player', 'PlayerScoresService'];
 
@@ -82,24 +108,22 @@ function PlayerStatsCtrl(PlayerScoresService) {
 PlayerStatsCtrl.$inject = ['PlayerScoresService'];
 
 
-function ScoreEntryCtrl(PlayerScore, PlayerScoresService) {
+function ScoreEntryCtrl(PlayerScoresService) {
   var thisCtrl = this;
   
   this.submitScores = function() {
     $.each(this.players, function(index, player) {
       if (player.newScore > 0) {
-        PlayerScore.submitNew({'playerId' : player.id, 'score' : player.newScore},
-          function() {
-            PlayerScoresService.refreshPlayerScores(player.id);
-            PlayerScoresService.refreshPlayerStats(player.id);
-          }
-        );
+        PlayerScoresService.submitScore(player.id, player.newScore, function() {
+          PlayerScoresService.refreshPlayerScores(player.id);
+          PlayerScoresService.refreshPlayerStats(player.id);
+        });
       }
       player.newScore = "";
     });
   }
 }
-ScoreEntryCtrl.$inject = ['PlayerScore', 'PlayerScoresService'];
+ScoreEntryCtrl.$inject = ['PlayerScoresService'];
 
 
 function PlayerScoresListCtrl(PlayerScoresService) {

@@ -16,7 +16,6 @@
 
   </header>
   <div role="main" ng:controller="MainCtrl">
-    
     <div ng:show="!_loading && players.length == 0">
       No players
     </div>
@@ -42,10 +41,10 @@
         <ul>
           <li ng:repeat="player in players">
             <span ng:bind="player.name"></span>
-            <input type="text" ng:model="player.newScore">
+            <input type="text" ng:model="player.newScore" ng:disabled="{{isPeformingRequest()}}">
           </li>
         </ul>
-        <input type="submit" ng:disabled="{{players.length == 0}}">
+        <input type="submit" ng:disabled="{{players.length == 0 || isPeformingRequest()}}">
       </form>
     </div>
     
