@@ -16,13 +16,18 @@
 
   </header>
   <div role="main">
-    {{greetings}}
     <div ng:controller="ScoreEntryCtrl">
       <form ng:submit="submitScores()">
         <ul class="score-entry">
           <li ng:repeat="player in players">
             <span ng:bind="player.name"></span>
             <input type="text" ng:model="player.newScore">
+            
+            <ul ng:controller="PlayerScoresListCtrl">
+              <li ng:repeat="score in getScores()">
+                <span ng:bind="score"></span>
+              </li>
+            </ul>
           </li>
         </ul>
         <input type="submit">

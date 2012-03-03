@@ -13,8 +13,6 @@ handlers:
   
 - url: /api/?.*
   script: api.py
-  login: required
 
 - url: .*
   script: main.py
-  login: required
