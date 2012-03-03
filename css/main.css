@@ -1,0 +1,104 @@
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6, p { margin: 0; padding: 0; }
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.column-container {
+  display: table;
+  margin: 0 auto;
+}
+
+.column {
+  width: 200px;
+  display: table-cell;
+}
+
+.player-stats {
+  margin-top: 60px;
+}
+
+.player-stats h1 {
+  font-size: 18px;
+}
+
+.player-stats .stat h2 {
+  width: 60px;
+  text-align: left;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.player-stats .stat span {
+  width: 60px;
+  text-align: right;
+  font-size: 32px;
+  display: inline-block;
+}
+
+.score-entry {
+  margin: 30px 0;
+}
+
+.score-entry .column-container {
+  position: relative;
+  background: #e5f5ff;
+  padding: 20px 160px 20px 160px;
+  border-radius: 8px;
+  border: 4px solid #b0deff;
+}
+
+.score-entry .column-container > span {
+  display: block;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  margin-top: -20px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 24px;
+}
+
+.score-entry input[type="text"] {
+  font-size: 24px;
+  width: 100px;
+  padding: 8px;
+  border: 1px solid #999;
+  border-radius: 2px;
+}
+
+.score-entry input[type="submit"] {
+  position: absolute;
+  top: 50%;
+  margin-top: -25px;
+  right: 20px;
+  height: 48px;
+  width: 120px;
+  font-size: 22px;
+  color: #fff;
+  background: -webkit-gradient(linear,left top,left bottom,from(#50B7D1),to(#286DA3));
+  border: 1px solid #51A0B3;
+  font-family: inherit;
+  text-shadow: 0 -1px 0 #000;
+  border-radius: 3px;
+}
+
+.score-entry input[type="submit"]:hover {
+  background: -webkit-gradient(linear,0% 0,0% 100%,from(#66C7E5),to(#328FC9));
+}
+
+.score-entry .name {
+  display: none;
+}
+
+.score-history .name {
+  display: none;
+}

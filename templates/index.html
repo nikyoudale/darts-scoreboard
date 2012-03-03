@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title></title>
+  <title>Posse Darts Club</title>
   <meta name="description" content="">
   
   <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
   <script type="text/javascript" src="/js/angular-0.10.6.min.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>
-  <!-- <link rel="stylesheet" href="css/style.css"> -->
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
   <header>
@@ -20,41 +20,44 @@
       No players
     </div>
     
-    <div ng:controller="PlayerStatsCtrl">
-      <ul>
-        <li ng:repeat="player in players">
-          <h1 ng:bind="player.name"></h1>
-          <div class="stat">
-            <h2>Max</h2>
-            <span ng:bind="get14DayMax()"></span>
-          </div>
-          <div class="stat">
-            <h2>Average</h2>
+    <div class="player-stats" ng:controller="PlayerStatsCtrl">
+      <ul class="column-container">
+        <li class="column" ng:repeat="player in players">
+          <h1 class="name" ng:bind="player.name"></h1>
+          <div class="stat average">
             <span ng:bind="get14DayMean()"></span>
+            <h2>Average</h2>
+          </div>
+          <div class="stat max">
+            <span ng:bind="get14DayMax()"></span>
+            <h2>Max</h2>
           </div>
         </li>
       </ul>
     </div>
     
-    <div ng:controller="ScoreEntryCtrl">
+    <div class="score-entry" ng:controller="ScoreEntryCtrl">
       <form ng:submit="submitScores()">
-        <ul>
-          <li ng:repeat="player in players">
-            <span ng:bind="player.name"></span>
-            <input type="text" ng:model="player.newScore" ng:disabled="{{isPeformingRequest()}}">
-          </li>
-        </ul>
-        <input type="submit" ng:disabled="{{players.length == 0 || isPeformingRequest()}}">
+        <div class="column-container">
+          <span>New Score</span>
+          <ul>
+            <li class="column" ng:repeat="player in players">
+              <h1 class="name" ng:bind="player.name"></h1>
+              <input type="text" ng:model="player.newScore" ng:disabled="{{isPeformingRequest()}}">
+            </li>
+          </ul>
+          <input type="submit" ng:disabled="{{players.length == 0 || isPeformingRequest()}}">
+        </div>
       </form>
     </div>
     
-    <div ng:controller="PlayerScoresListCtrl">
-      <ul>
-        <li ng:repeat="player in players">
-          <span ng:bind="player.name"></span>
+    <div class="score-history" ng:controller="PlayerScoresListCtrl">
+      <ul class="column-container">
+        <li class="column" ng:repeat="player in players">
+          <h1 class="name" ng:bind="player.name"></h1>
           <ul>
             <li ng:repeat="score in getScores()">
-              <span ng:bind="score"></span>
+              <span ng:bind="score.points"></span>
             </li>
           </ul>
         </li>
