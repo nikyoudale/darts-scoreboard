@@ -15,24 +15,49 @@
   <header>
 
   </header>
-  <div role="main">
+  <div role="main" ng:controller="MainCtrl">
+    
+    <div ng:controller="PlayerStatsCtrl">
+      <ul>
+        <li ng:repeat="player in players">
+          <h1 ng:bind="player.name"></h1>
+          <div class="stat">
+            <h2>Max</h2>
+            <span ng:bind="get14DayMax()"></span>
+          </div>
+          <div class="stat">
+            <h2>Average</h2>
+            <span ng:bind="get14DayMean()"></span>
+          </div>
+        </li>
+      </ul>
+    </div>
+    
     <div ng:controller="ScoreEntryCtrl">
       <form ng:submit="submitScores()">
-        <ul class="score-entry">
+        <ul>
           <li ng:repeat="player in players">
             <span ng:bind="player.name"></span>
             <input type="text" ng:model="player.newScore">
-            
-            <ul ng:controller="PlayerScoresListCtrl">
-              <li ng:repeat="score in getScores()">
-                <span ng:bind="score"></span>
-              </li>
-            </ul>
           </li>
         </ul>
         <input type="submit">
       </form>
     </div>
+    
+    <div ng:controller="PlayerScoresListCtrl">
+      <ul>
+        <li ng:repeat="player in players">
+          <span ng:bind="player.name"></span>
+          <ul>
+            <li ng:repeat="score in getScores()">
+              <span ng:bind="score"></span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    
   </div>
   <footer>
 

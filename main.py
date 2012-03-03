@@ -22,10 +22,11 @@ import os
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
-      template_values = {}
-
-      path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
-      self.response.out.write(template.render(path, template_values))
+      if self.request.get('secret') == "a93f2cd3ddc84ef08439a095e1c1606634b1f2a0":
+        path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
+        self.response.out.write(template.render(path, {}))
+      else:
+        self.response.set_status(403)
 
 def main():
     application = webapp.WSGIApplication([('/', MainHandler)],
