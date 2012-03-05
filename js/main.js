@@ -41,6 +41,9 @@ function(PlayerScore, PlayerStats) {
     playerScores: function(playerId) {
       return scoresByPlayerId[playerId];
     },
+    getCountOfPlayerScores: function(playerId) {
+      return scoresByPlayerId[playerId] ? scoresByPlayerId[playerId].length : 0;
+    },
     refreshPlayerScores: function(playerId) {
       waitingRequestCount++;
       var scoresList = PlayerScore.list({'playerId' : playerId, 'max' : 10},
@@ -69,6 +72,10 @@ function(PlayerScore, PlayerStats) {
     },
     isLoading: function() {
       return waitingRequestCount != 0;
+    },
+    refreshPlayerData: function(playerId) {
+      this.refreshPlayerScores(playerId);
+      this.refreshPlayerStats(playerId);
     }
   }
 }]);
@@ -81,8 +88,7 @@ function MainCtrl(Player, PlayerScoresService) {
   
   this.players = Player.getAll({}, function() {
     $.each(thisCtrl.players, function(index, player) {
-      PlayerScoresService.refreshPlayerScores(player.id);
-      PlayerScoresService.refreshPlayerStats(player.id);
+      PlayerScoresService.refreshPlayerData(player.id);
     });
     thisCtrl._loading = false;
   });
@@ -104,6 +110,10 @@ function PlayerStatsCtrl(PlayerScoresService) {
   this.get14DayMean = function() {
     return PlayerScoresService.getPlayerStat(this.player.id, 'mean-14-day');
   }
+  
+  this.hasEnoughStats = function() {
+    return PlayerScoresService.getCountOfPlayerScores(this.player.id) >= 5;
+  }
 }
 PlayerStatsCtrl.$inject = ['PlayerScoresService'];
 
@@ -115,8 +125,7 @@ function ScoreEntryCtrl(PlayerScoresService) {
     $.each(this.players, function(index, player) {
       if (player.newScore > 0) {
         PlayerScoresService.submitScore(player.id, player.newScore, function() {
-          PlayerScoresService.refreshPlayerScores(player.id);
-          PlayerScoresService.refreshPlayerStats(player.id);
+          PlayerScoresService.refreshPlayerData(player.id);
         });
       }
       player.newScore = "";
