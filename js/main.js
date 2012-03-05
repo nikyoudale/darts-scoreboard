@@ -80,6 +80,28 @@ function(PlayerScore, PlayerStats) {
   }
 }]);
 
+function localDateFromUTC(dateStr) {
+  var d = new Date(0);
+  d.setUTCSeconds(new Date(dateStr).getTime());
+  return d;
+}
+
+var PRETTY_DATE_UPDATE_INTERVAL = 30000; // milliseconds
+
+angular.directive('ps:prettydate', function(expression, compileElement) {
+  return function(linkElement) {
+    var thisObj = this;
+    setInterval(function () {
+      var date = thisObj.$eval(expression);
+      var pretty = prettyDate(localDateFromUTC(date));
+      linkElement.html(prettyDate(localDateFromUTC(date)));
+    }, PRETTY_DATE_UPDATE_INTERVAL);
+    this.$watch(expression, function(scope, value, oldValue) {
+      linkElement.html(prettyDate(localDateFromUTC(value)));
+    });
+  };
+});
+
 
 function MainCtrl(Player, PlayerScoresService) {
   var thisCtrl = this;

@@ -7,6 +7,7 @@ import json
 from Player import Player
 from Score import Score
 import datetime
+import time
 
 
 class PlayersListHandler(webapp.RequestHandler):
@@ -38,7 +39,7 @@ class PlayerScoreListHandler(webapp.RequestHandler):
     player = db.get(db.Key.from_path('Player', playerId))
     
     results = player.scores.order('-date').fetch(maxResults)
-    scores = [{'date' : s.date.isoformat(), 'points' : s.points} for s in results]
+    scores = [{'date' : time.mktime(s.date.timetuple()), 'points' : s.points} for s in results]
     
     self.response.out.write(json.dumps(scores));
 

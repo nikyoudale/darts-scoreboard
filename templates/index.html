@@ -8,6 +8,7 @@
   
   <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
   <script type="text/javascript" src="/js/angular-0.10.6.min.js"></script>
+  <script type="text/javascript" src="/js/prettydate.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>
   <link rel="stylesheet" href="css/main.css">
 </head>
@@ -32,12 +33,18 @@
         <tbody>
           <tr class="average">
             <td class="sidebar left">Average</td>
-            <td class="column" ng:repeat="player in players">{{get14DayMean()}}</td>
+            <td class="column" ng:repeat="player in players">
+              <span ng:show="!hasEnoughStats()">-</span>
+              <span ng:bind="get14DayMean()" ng:show="hasEnoughStats()">
+            </td>
             <td class="sidebar right"></td>
           </tr>
           <tr class="max">
             <td class="sidebar left">Max</td>
-            <td class="column" ng:repeat="player in players">{{get14DayMean()}}</td>
+            <td class="column" ng:repeat="player in players">
+              <span ng:show="!hasEnoughStats()">-</span>
+              <span ng:bind="get14DayMax()" ng:show="hasEnoughStats()">
+            </td>
             <td class="sidebar right"></td>
           </tr>
         </tbody>
@@ -64,18 +71,20 @@
           <tr>
             <td class="sidebar left">History</td>
             <td class="column" ng:repeat="player in players">
-              <ul>
-                <li ng:repeat="score in getScores()">
-                  <span ng:bind="score.points"></span>
-                </li>
-              </ul>
+              <table>
+                <tbody>
+                  <tr ng:repeat="score in getScores()">
+                    <td class="points" ng:bind="score.points"></td>
+                    <td class="date" ps:prettydate="score.date"></td>
+                  </tr>
+                </tbody>
+              </table>
             </td>
             <td class="sidebar right"></td>
           </tr>
         </tbody>
       </table>
     </div>
-
   </div>
   <footer>
 

@@ -119,3 +119,20 @@ table {
   vertical-align: top;
   text-align: center;
 }
+
+.score-history .points, .score-history .date {
+  line-height: 22px;
+  vertical-align: baseline;
+}
+
+.score-history .points {
+  color: #333;
+  font-size: 14px;
+}
+
+.score-history .date {
+  color: #ccc;
+  font-size: 9px;
+  text-align: left;
+  padding-left: 4px;
+}
