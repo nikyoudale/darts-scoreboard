@@ -10,7 +10,7 @@ import datetime
 
 
 class PlayersListHandler(webapp.RequestHandler):
-  DEFAULT_PLAYER_NAMES = ["Player 1", "Player 2"]
+  DEFAULT_PLAYER_NAMES = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6"]
   def get(self):
     # Create default players if none exist
     q = db.Query(Player)
