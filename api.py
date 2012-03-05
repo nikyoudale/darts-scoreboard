@@ -55,8 +55,8 @@ class PlayerStatsHandler(webapp.RequestHandler):
     results = player.scores.filter('date >=', date14DaysAgo)
     scores = [s.points for s in results]
     if len(scores) > 0:
-      stats['max-14-day'] = max(scores)
-      stats['mean-14-day'] = sum(scores)/len(scores)
+      stats['max-14-day'] = round(max(scores))
+      stats['mean-14-day'] = round(float(sum(scores))/len(scores))
     
     self.response.out.write(json.dumps(stats));
 
