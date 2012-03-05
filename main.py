@@ -22,7 +22,7 @@ import os
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
-      if self.request.get('secret') == "a93f2cd3ddc84ef08439a095e1c1606634b1f2a0":
+      if self.request.get('secret') == "udon":
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
         f = open(path)
         self.response.out.write(f.read())
