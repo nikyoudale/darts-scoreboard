@@ -34,16 +34,22 @@
           <tr class="average">
             <td class="sidebar left">Average</td>
             <td class="column" ng:repeat="player in players">
-              <span ng:show="!hasEnoughStats()">-</span>
-              <span ng:bind="get14DayMean()" ng:show="hasEnoughStats()">
+              <div>
+                <span ng:show="!hasEnoughStats()">-</span>
+                <span ng:bind="get14DayMean()" ng:show="hasEnoughStats()"></span>
+                <span ng:bind-attr="{'data-rank' : '{{get14DayMeanRanking()}}'}" ng:show="hasEnoughStats()"></span>
+              </div>
             </td>
             <td class="sidebar right"></td>
           </tr>
           <tr class="max">
             <td class="sidebar left">Max</td>
             <td class="column" ng:repeat="player in players">
-              <span ng:show="!hasEnoughStats()">-</span>
-              <span ng:bind="get14DayMax()" ng:show="hasEnoughStats()">
+              <div>
+                <span ng:show="!hasEnoughStats()">-</span>
+                <span ng:bind="get14DayMax()" ng:show="hasEnoughStats()"></span>
+                <span ng:bind-attr="{'data-rank' : '{{get14DayMaxRanking()}}'}" ng:show="hasEnoughStats()"></span>
+              </div>
             </td>
             <td class="sidebar right"></td>
           </tr>

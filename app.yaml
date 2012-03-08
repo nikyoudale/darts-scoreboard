@@ -14,6 +14,9 @@ handlers:
 
 - url: /css
   static_dir: css
+
+- url: /images
+  static_dir: images
   
 - url: /api/?.*
   script: api.py

@@ -90,6 +90,7 @@ function localDateFromUTC(dateStr) {
   return d;
 }
 
+
 var PRETTY_DATE_UPDATE_INTERVAL = 30000; // milliseconds
 
 angular.directive('ps:prettydate', function(expression, compileElement) {
@@ -136,6 +137,14 @@ function PlayerStatsCtrl(PlayerScoresService) {
   
   this.get14DayMean = function() {
     return PlayerScoresService.getPlayerStat(this.player.id, 'mean-14-day');
+  }
+  
+  this.get14DayMaxRanking = function() {
+    return PlayerScoresService.getPlayerRanking(this.player.id, 'max-14-day');
+  }
+  
+  this.get14DayMeanRanking = function() {
+    return PlayerScoresService.getPlayerRanking(this.player.id, 'mean-14-day');
   }
   
   this.hasEnoughStats = function() {

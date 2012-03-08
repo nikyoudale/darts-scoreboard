@@ -86,6 +86,27 @@ table {
   font-size: 28px;
 }
 
+.player-stats td.column > div {
+  position: relative;
+}
+
+.player-stats span[data-rank] {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  position: absolute;
+  right: 10px;
+  top: 6px;
+}
+
+/* Icons from: http://www.iconspedia.com/pack/fatcow-hosting-icons-3184/ */
+.player-stats span[data-rank="1"] {
+  background: url('/images/medal-gold-24.png');
+}
+
+.player-stats span[data-rank="2"] {
+  background: url('/images/medal-silver-24.png');
+}
 
 
 /***** Score entry section *****/
