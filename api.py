@@ -34,37 +34,32 @@ class NewScoreHandler(webapp.RequestHandler):
 class PlayerScoreListHandler(webapp.RequestHandler):
   def get(self):
     playerId = int(self.request.get('playerId'))
-    maxResults = int(self.request.get('max'))
+    maxResults = int(self.request.get('maxScores'))
     
     player = db.get(db.Key.from_path('Player', playerId))
     
     results = player.scores.order('-date').fetch(maxResults)
     scores = [{'date' : time.mktime(s.date.timetuple()), 'points' : s.points} for s in results]
     
-    self.response.out.write(json.dumps(scores));
-
-class PlayerStatsHandler(webapp.RequestHandler):
-  def get(self):
-    playerId = int(self.request.get('playerId'))
-    player = db.get(db.Key.from_path('Player', playerId))
-    
     stats = {}
     
     # 14 day stats
     date14DaysAgo = datetime.datetime.now() - datetime.timedelta(days=14)
     results = player.scores.filter('date >=', date14DaysAgo)
-    scores = [s.points for s in results]
-    if len(scores) > 0:
-      stats['max-14-day'] = round(max(scores))
-      stats['mean-14-day'] = round(float(sum(scores))/len(scores))
+    scores14Days = [s.points for s in results]
+    if len(scores14Days) > 0:
+      stats['max-14-day'] = round(max(scores14Days))
+      stats['mean-14-day'] = round(float(sum(scores14Days))/len(scores14Days))
     
-    self.response.out.write(json.dumps(stats));
+    
+    response = {'scores' : scores, 'stats' : stats}
+    
+    self.response.out.write(json.dumps(response));
 
 def main():
   application = webapp.WSGIApplication([('/api/players', PlayersListHandler),
                                         ('/api/scores/new', NewScoreHandler),
                                         ('/api/scores/player', PlayerScoreListHandler),
-                                        ('/api/stats/player', PlayerStatsHandler),
                                        ],
                                        debug=True)
   util.run_wsgi_app(application)

@@ -6,10 +6,10 @@ possedartsModule.factory('Player', ['$resource', function($resource) {
   });
 }]);
 
-possedartsModule.factory('PlayerScore', ['$resource', function($resource) {
+possedartsModule.factory('PlayerScores', ['$resource', function($resource) {
   return $resource('/api/scores/:action', {}, {
     'submitNew': {method: 'POST', params: {'action' : 'new'}},
-    'list' : {method: 'GET', params: {'action' : 'player', 'max' : 50}, isArray: true}
+    'get' : {method: 'GET', params: {'action' : 'player', 'maxScores' : 50}}
   });
 }]);
 
@@ -19,8 +19,8 @@ possedartsModule.factory('PlayerStats', ['$resource', function($resource) {
   });
 }]);
 
-possedartsModule.factory('PlayerScoresService', ['PlayerScore', 'PlayerStats',
-function(PlayerScore, PlayerStats) {
+possedartsModule.factory('PlayerScoresService', ['PlayerScores', 'PlayerStats',
+function(PlayerScores, PlayerStats) {
   var scoresByPlayerId = {};
   var statsByPlayerId = {};
   var waitingRequestCount = 0;
@@ -28,7 +28,7 @@ function(PlayerScore, PlayerStats) {
   return {
     submitScore: function(playerId, points, callbackFn) {
       waitingRequestCount++;
-      PlayerScore.submitNew({'playerId' : playerId, 'score' : points},
+      PlayerScores.submitNew({'playerId' : playerId, 'score' : points},
         function() {
           if (callbackFn) {
             callbackFn();
@@ -44,38 +44,25 @@ function(PlayerScore, PlayerStats) {
     getCountOfPlayerScores: function(playerId) {
       return scoresByPlayerId[playerId] ? scoresByPlayerId[playerId].length : 0;
     },
-    refreshPlayerScores: function(playerId) {
-      waitingRequestCount++;
-      var scoresList = PlayerScore.list({'playerId' : playerId, 'max' : 10},
-        function() {
-          scoresByPlayerId[playerId] = scoresList;
-          waitingRequestCount--;
-        },
-        function() { waitingRequestCount--; } // error
-      );
-    },
     getPlayerStat: function(playerId, stat) {
       if (statsByPlayerId[playerId]) {
         return statsByPlayerId[playerId][stat];
       }
       return undefined;
     },
-    refreshPlayerStats: function(playerId) {
-      waitingRequestCount++;
-      var stats = PlayerStats.getAll({'playerId' : playerId},
-        function() {
-          statsByPlayerId[playerId] = stats;
-          waitingRequestCount--;
-        },
-        function() { waitingRequestCount--; } // error
-      );
-    },
     isLoading: function() {
       return waitingRequestCount != 0;
     },
     refreshPlayerData: function(playerId) {
-      this.refreshPlayerScores(playerId);
-      this.refreshPlayerStats(playerId);
+      waitingRequestCount++;
+      var scoresList = PlayerScores.get({'playerId' : playerId, 'maxScores' : 10},
+        function() {
+          scoresByPlayerId[playerId] = scoresList['scores'];
+          statsByPlayerId[playerId] = scoresList['stats'];
+          waitingRequestCount--;
+        },
+        function() { waitingRequestCount--; } // error
+      );
     }
   }
 }]);
