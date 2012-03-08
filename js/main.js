@@ -1,3 +1,29 @@
+/* Setup keyboard shortcuts */
+shortcut.add("left", function() {
+  var inputs = $('.score-entry input[type="text"]');
+  var focusedInput = $('input[type="text"]:focus').get(0);
+  var newIndex = inputs.length-1;
+  if (focusedInput) {
+    var index = $.inArray(focusedInput, inputs);
+    newIndex = Math.max(index-1, 0);
+  }
+  inputs.get(newIndex).focus();
+});
+
+shortcut.add("right", function() {
+  var inputs = $('.score-entry input[type="text"]');
+  var focusedInput = $('input[type="text"]:focus').get(0);
+  var newIndex = 0;
+  if (focusedInput) {
+    var index = $.inArray(focusedInput, inputs);
+    newIndex = Math.min(index+1, inputs.length-1);
+  }
+  inputs.get(newIndex).focus();
+});
+
+
+
+
 var possedartsModule = angular.module('possedarts', []);
 
 possedartsModule.factory('Player', ['$resource', function($resource) {
