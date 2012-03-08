@@ -13,16 +13,17 @@ possedartsModule.factory('PlayerScores', ['$resource', function($resource) {
   });
 }]);
 
-possedartsModule.factory('PlayerStats', ['$resource', function($resource) {
-  return $resource('/api/stats/player', {}, {
-    'getAll' : {method: 'GET'}
+possedartsModule.factory('Rankings', ['$resource', function($resource) {
+  return $resource('/api/scores/rankings', {}, {
+    'get' : {method: 'GET'}
   });
 }]);
 
-possedartsModule.factory('PlayerScoresService', ['PlayerScores', 'PlayerStats',
-function(PlayerScores, PlayerStats) {
+possedartsModule.factory('PlayerScoresService', ['PlayerScores', 'Rankings',
+function(PlayerScores, Rankings) {
   var scoresByPlayerId = {};
   var statsByPlayerId = {};
+  var rankingsByStat = {};
   var waitingRequestCount = 0;
   
   return {
@@ -50,6 +51,12 @@ function(PlayerScores, PlayerStats) {
       }
       return undefined;
     },
+    getPlayerRanking: function(playerId, stat) {
+      if (rankingsByStat[stat]) {
+        return rankingsByStat[stat][playerId];
+      }
+      return undefined;
+    },
     isLoading: function() {
       return waitingRequestCount != 0;
     },
@@ -59,6 +66,16 @@ function(PlayerScores, PlayerStats) {
         function() {
           scoresByPlayerId[playerId] = scoresList['scores'];
           statsByPlayerId[playerId] = scoresList['stats'];
+          waitingRequestCount--;
+        },
+        function() { waitingRequestCount--; } // error
+      );
+    },
+    refreshRankings: function() {
+      waitingRequestCount++;
+      var rankings = Rankings.get({},
+        function() {
+          rankingsByStat = rankings;
           waitingRequestCount--;
         },
         function() { waitingRequestCount--; } // error
@@ -99,6 +116,7 @@ function MainCtrl(Player, PlayerScoresService) {
     $.each(thisCtrl.players, function(index, player) {
       PlayerScoresService.refreshPlayerData(player.id);
     });
+    PlayerScoresService.refreshRankings();
     thisCtrl._loading = false;
   });
   
@@ -137,6 +155,7 @@ function ScoreEntryCtrl(PlayerScoresService) {
           PlayerScoresService.refreshPlayerData(player.id);
         });
       }
+      PlayerScoresService.refreshRankings();
       player.newScore = "";
     });
   }

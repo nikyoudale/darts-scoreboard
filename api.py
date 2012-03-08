@@ -8,6 +8,7 @@ from Player import Player
 from Score import Score
 import datetime
 import time
+from ScoresHelper import *
 
 
 class PlayersListHandler(webapp.RequestHandler):
@@ -44,22 +45,30 @@ class PlayerScoreListHandler(webapp.RequestHandler):
     stats = {}
     
     # 14 day stats
-    date14DaysAgo = datetime.datetime.now() - datetime.timedelta(days=14)
-    results = player.scores.filter('date >=', date14DaysAgo)
-    scores14Days = [s.points for s in results]
-    if len(scores14Days) > 0:
-      stats['max-14-day'] = round(max(scores14Days))
-      stats['mean-14-day'] = round(float(sum(scores14Days))/len(scores14Days))
-    
+    scoresHelper = ScoresHelper(playerId)
+    if scoresHelper.hasScores():
+      stats['max-14-day'] = scoresHelper.get14DayMax()
+      stats['mean-14-day'] = scoresHelper.get14DayMean()
     
     response = {'scores' : scores, 'stats' : stats}
     
     self.response.out.write(json.dumps(response));
 
+class RankingsHandler(webapp.RequestHandler):
+  def get(self):
+    rankings = Rankings.getRankings()
+    keyMappings = {ScoreType.Mean14Day : 'mean-14-day', ScoreType.Max14Day : 'max-14-day'}
+    responseRankings = {}
+    for scoreType in ScoreType.types():
+      if keyMappings[scoreType] is not None:
+        responseRankings[keyMappings[scoreType]] = rankings[scoreType]
+    self.response.out.write(json.dumps(responseRankings));
+
 def main():
   application = webapp.WSGIApplication([('/api/players', PlayersListHandler),
                                         ('/api/scores/new', NewScoreHandler),
                                         ('/api/scores/player', PlayerScoreListHandler),
+                                        ('/api/scores/rankings', RankingsHandler),
                                        ],
                                        debug=True)
   util.run_wsgi_app(application)
