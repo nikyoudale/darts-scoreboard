@@ -190,9 +190,9 @@ function ScoreEntryCtrl(PlayerScoresService) {
           PlayerScoresService.refreshPlayerData(player.id);
         });
       }
-      PlayerScoresService.refreshRankings();
       player.newScore = "";
     });
+    PlayerScoresService.refreshRankings();
   }
 }
 ScoreEntryCtrl.$inject = ['PlayerScoresService'];
