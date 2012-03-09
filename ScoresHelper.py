@@ -2,6 +2,7 @@ import datetime
 from google.appengine.ext import db
 from Player import Player
 import operator
+from google.appengine.api import memcache
 
 
 class ScoreType:
@@ -14,6 +15,7 @@ class ScoreType:
 
 
 class ScoresHelper:
+  CACHE_EXPIRY = 86400 # 1 day
   def __init__(self, playerId):
     self._playerId = playerId
     self._scores14Days = None
@@ -46,8 +48,19 @@ class ScoresHelper:
     return None
   
   def hasScores(self):
-    return len(self.get14DayScores()) > 0
+    mckey = "player-%s-has-scores" % (self._playerId,)
+    has = memcache.get(mckey)
+    if has is not None:
+      return has
+    else:
+      has = len(self.get14DayScores()) > 0
+      memcache.add(mckey, has, self.CACHE_EXPIRY)
+    return has
   
+  def clearCache(self):
+    memcache.delete_multi([
+      "player-%s-has-scores" % (self._playerId,),
+    ])
 
 
 class Rankings:

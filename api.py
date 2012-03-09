@@ -31,6 +31,9 @@ class NewScoreHandler(webapp.RequestHandler):
     player = db.Key.from_path('Player', playerId)
     
     Score(player=player, points=score).put()
+    
+    scoresHelper = ScoresHelper(playerId)
+    scoresHelper.clearCache()
 
 class PlayerScoreListHandler(webapp.RequestHandler):
   def get(self):
