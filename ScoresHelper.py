@@ -29,16 +29,24 @@ class ScoresHelper:
     return self._scores14Days
   
   def get14DayMean(self):
-    scores = self.get14DayScores()
-    if len(scores) > 0:
-      return round(float(sum(scores))/len(scores))
-    return None
+    mckey = "player-%s-14-day-mean" % (self._playerId,)
+    score = memcache.get(mckey)
+    if score is None:
+      scores = self.get14DayScores()
+      if len(scores) > 0:
+        score = round(float(sum(scores))/len(scores))
+        memcache.add(mckey, score, self.CACHE_EXPIRY)
+    return score
   
   def get14DayMax(self):
-    scores = self.get14DayScores()
-    if len(scores) > 0:
-      return round(max(scores))
-    return None
+    mckey = "player-%s-14-day-max" % (self._playerId,)
+    score = memcache.get(mckey)
+    if score is None:
+      scores = self.get14DayScores()
+      if len(scores) > 0:
+        score = round(max(scores))
+        memcache.add(mckey, score, self.CACHE_EXPIRY)
+    return score
   
   def getScore(self, scoreType):
     if scoreType == ScoreType.Mean14Day:
@@ -50,9 +58,7 @@ class ScoresHelper:
   def hasScores(self):
     mckey = "player-%s-has-scores" % (self._playerId,)
     has = memcache.get(mckey)
-    if has is not None:
-      return has
-    else:
+    if has is None:
       has = len(self.get14DayScores()) > 0
       memcache.add(mckey, has, self.CACHE_EXPIRY)
     return has
@@ -60,6 +66,8 @@ class ScoresHelper:
   def clearCache(self):
     memcache.delete_multi([
       "player-%s-has-scores" % (self._playerId,),
+      "player-%s-14-day-mean" % (self._playerId,),
+      "player-%s-14-day-max" % (self._playerId,),
     ])
 
 
