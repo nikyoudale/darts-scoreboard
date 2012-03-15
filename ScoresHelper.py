@@ -80,7 +80,7 @@ class Rankings:
     for player in players:
       playerId = player.id_or_name()
       scoresHelper = ScoresHelper(playerId)
-      if scoresHelper.hasScores:
+      if scoresHelper.hasScores():
         for scoreType in ScoreType.types():
           score = scoresHelper.getScore(scoreType)
           scoresByType[scoreType].append({'playerId':playerId, 'score':score})
