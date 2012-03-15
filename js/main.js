@@ -56,13 +56,8 @@ function(PlayerScores, Rankings) {
     submitScore: function(playerId, points, callbackFn) {
       waitingRequestCount++;
       PlayerScores.submitNew({'playerId' : playerId, 'score' : points},
-        function() {
-          if (callbackFn) {
-            callbackFn();
-          }
-          waitingRequestCount--;
-        },
-        function() { waitingRequestCount--; } // error
+        function() { if (callbackFn) callbackFn(); waitingRequestCount--; },
+        function() { if (callbackFn) callbackFn(); waitingRequestCount--; } // error
       );
     },
     playerScores: function(playerId) {
@@ -184,15 +179,20 @@ function ScoreEntryCtrl(PlayerScoresService) {
   var thisCtrl = this;
   
   this.submitScores = function() {
+    var reqCount = 0;
     $.each(this.players, function(index, player) {
       if (player.newScore > 0) {
+        reqCount++;
         PlayerScoresService.submitScore(player.id, player.newScore, function() {
           PlayerScoresService.refreshPlayerData(player.id);
+          if (--reqCount == 0) {
+            // Last score submit is now complete
+            PlayerScoresService.refreshRankings();
+          }
         });
       }
       player.newScore = "";
     });
-    PlayerScoresService.refreshRankings();
   }
 }
 ScoreEntryCtrl.$inject = ['PlayerScoresService'];
