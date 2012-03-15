@@ -67,15 +67,10 @@ class RankingsHandler(webapp.RequestHandler):
         responseRankings[keyMappings[scoreType]] = rankings[scoreType]
     self.response.out.write(json.dumps(responseRankings));
 
-def main():
-  application = webapp.WSGIApplication([('/api/players', PlayersListHandler),
+
+application = webapp.WSGIApplication([('/api/players', PlayersListHandler),
                                         ('/api/scores/new', NewScoreHandler),
                                         ('/api/scores/player', PlayerScoreListHandler),
                                         ('/api/scores/rankings', RankingsHandler),
                                        ],
                                        debug=True)
-  util.run_wsgi_app(application)
-
-
-if __name__ == '__main__':
-  main()

@@ -2,7 +2,7 @@ application: possedartsclub
 version: 2
 runtime: python27
 api_version: 1
-threadsafe: false
+threadsafe: true
 
 handlers:
 - url: /favicon\.ico
@@ -19,7 +19,7 @@ handlers:
   static_dir: images
   
 - url: /api/?.*
-  script: api.py
+  script: api.application
 
 - url: .*
-  script: main.py
+  script: main.application

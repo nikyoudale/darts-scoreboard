@@ -30,11 +30,5 @@ class MainHandler(webapp.RequestHandler):
       else:
         self.response.set_status(403)
 
-def main():
-    application = webapp.WSGIApplication([('/', MainHandler)],
+application = webapp.WSGIApplication([('/', MainHandler)],
                                          debug=True)
-    util.run_wsgi_app(application)
-
-
-if __name__ == '__main__':
-    main()
