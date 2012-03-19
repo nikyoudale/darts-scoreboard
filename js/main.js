@@ -114,73 +114,73 @@ function localDateFromUTC(dateStr) {
 
 var PRETTY_DATE_UPDATE_INTERVAL = 30000; // milliseconds
 
-angular.directive('ps:prettydate', function(expression, compileElement) {
-  return function(linkElement) {
-    var thisObj = this;
+possedartsModule.directive('psPrettyDate', function() {
+  return function(scope, element, attrs) {
+    var expression = attrs.psPrettyDate;
     setInterval(function () {
-      var date = thisObj.$eval(expression);
+      var date = scope.$eval(expression);
       var pretty = prettyDate(localDateFromUTC(date));
-      linkElement.html(prettyDate(localDateFromUTC(date)));
+      element.html(prettyDate(localDateFromUTC(date)));
     }, PRETTY_DATE_UPDATE_INTERVAL);
-    this.$watch(expression, function(scope, value, oldValue) {
-      linkElement.html(prettyDate(localDateFromUTC(value)));
+    scope.$watch(expression, function(value, oldValue, scope) {
+      element.html(prettyDate(localDateFromUTC(value)));
     });
   };
 });
 
 
-function MainCtrl(Player, PlayerScoresService) {
+function MainCtrl($scope, Player, PlayerScoresService) {
   var thisCtrl = this;
   
-  this._loading = true;
+  $scope._loading = true;
   
-  this.players = Player.getAll({}, function() {
-    $.each(thisCtrl.players, function(index, player) {
+  $scope.players = Player.getAll({}, function() {
+    $.each($scope.players, function(index, player) {
       PlayerScoresService.refreshPlayerData(player.id);
     });
     PlayerScoresService.refreshRankings();
-    thisCtrl._loading = false;
+    $scope._loading = false;
   });
   
-  this.isPeformingRequest = function() {
+  $scope.isPeformingRequest = function() {
     return PlayerScoresService.isLoading();
   }
 }
-MainCtrl.$inject = ['Player', 'PlayerScoresService'];
+MainCtrl.$inject = ['$scope', 'Player', 'PlayerScoresService'];
 
 
-function PlayerStatsCtrl(PlayerScoresService) {
+function PlayerStatsCtrl($scope, PlayerScoresService) {
   var thisCtrl = this;
   
-  this.get14DayMax = function() {
-    return PlayerScoresService.getPlayerStat(this.player.id, 'max-14-day');
+  $scope.get14DayMax = function(player) {
+    return PlayerScoresService.getPlayerStat(player.id, 'max-14-day');
   }
   
-  this.get14DayMean = function() {
-    return PlayerScoresService.getPlayerStat(this.player.id, 'mean-14-day');
+  $scope.get14DayMean = function(player) {
+    return PlayerScoresService.getPlayerStat(player.id, 'mean-14-day');
   }
   
-  this.get14DayMaxRanking = function() {
-    return PlayerScoresService.getPlayerRanking(this.player.id, 'max-14-day');
+  $scope.get14DayMaxRanking = function(player) {
+    return PlayerScoresService.getPlayerRanking(player.id, 'max-14-day');
   }
   
-  this.get14DayMeanRanking = function() {
-    return PlayerScoresService.getPlayerRanking(this.player.id, 'mean-14-day');
+  $scope.get14DayMeanRanking = function(player) {
+    return PlayerScoresService.getPlayerRanking(player.id, 'mean-14-day');
   }
   
-  this.hasEnoughStats = function() {
-    return PlayerScoresService.getCountOfPlayerScores(this.player.id) >= 5;
+  $scope.hasEnoughStats = function(player) {
+    return PlayerScoresService.getCountOfPlayerScores(player.id) >= 5;
   }
 }
-PlayerStatsCtrl.$inject = ['PlayerScoresService'];
+PlayerStatsCtrl.$inject = ['$scope', 'PlayerScoresService'];
 
 
-function ScoreEntryCtrl(PlayerScoresService) {
+function ScoreEntryCtrl($scope, PlayerScoresService) {
   var thisCtrl = this;
   
-  this.submitScores = function() {
+  $scope.submitScores = function() {
     var reqCount = 0;
-    $.each(this.players, function(index, player) {
+    $.each($scope.players, function(index, player) {
       if (player.newScore > 0) {
         reqCount++;
         PlayerScoresService.submitScore(player.id, player.newScore, function() {
@@ -195,14 +195,14 @@ function ScoreEntryCtrl(PlayerScoresService) {
     });
   }
 }
-ScoreEntryCtrl.$inject = ['PlayerScoresService'];
+ScoreEntryCtrl.$inject = ['$scope', 'PlayerScoresService'];
 
 
-function PlayerScoresListCtrl(PlayerScoresService) {
+function PlayerScoresListCtrl($scope, PlayerScoresService) {
   var thisCtrl = this;
   
-  this.getScores = function() {
-    return PlayerScoresService.playerScores(this.player.id);
+  $scope.getScores = function(player) {
+    return PlayerScoresService.playerScores(player.id);
   }
 }
-PlayerScoresListCtrl.$inject = ['PlayerScoresService'];
+PlayerScoresListCtrl.$inject = ['$scope', 'PlayerScoresService'];

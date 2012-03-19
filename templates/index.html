@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en-us" ng:app='possedarts'>
+<html lang="en-us" ng-app='possedarts'>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -7,7 +7,7 @@
   <meta name="description" content="">
   
   <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
-  <script type="text/javascript" src="/js/angular-0.10.6.min.js"></script>
+  <script type="text/javascript" src="/js/angular-1.0.0rc1.min.js"></script>
   <script type="text/javascript" src="/js/prettydate.js"></script>
   <script type="text/javascript" src="/js/shortcut.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>
@@ -17,39 +17,39 @@
   <header>
 
   </header>
-  <div role="main" ng:controller="MainCtrl">
-    <div ng:show="!_loading && players.length == 0">
+  <div role="main" ng-controller="MainCtrl">
+    <div ng-show="!_loading && players.length == 0">
       No players
     </div>
 
-    <div class="player-stats" ng:controller="PlayerStatsCtrl">
+    <div class="player-stats" ng-controller="PlayerStatsCtrl">
       <table>
         <thead>
           <tr>
             <th class="sidebar left"></th>
-            <th class="column" ng:repeat="player in players">{{player.name}}</th>
+            <th class="column" ng-repeat="player in players">{{player.name}}</th>
             <th class="sidebar right"></th>
           </tr>
         </thead>
         <tbody>
           <tr class="average">
             <td class="sidebar left">Average</td>
-            <td class="column" ng:repeat="player in players">
+            <td class="column" ng-repeat="player in players">
               <div>
-                <span ng:show="!hasEnoughStats()">-</span>
-                <span ng:bind="get14DayMean()" ng:show="hasEnoughStats()"></span>
-                <span ng:bind-attr="{'data-rank' : '{{get14DayMeanRanking()}}'}" ng:show="hasEnoughStats()"></span>
+                <span ng-show="!hasEnoughStats(player)">-</span>
+                <span ng-bind="get14DayMean(player)" ng-show="hasEnoughStats(player)"></span>
+                <span ng-bind-attr="{'data-rank' : '{{get14DayMeanRanking(player)}}'}" ng-show="hasEnoughStats(player)"></span>
               </div>
             </td>
             <td class="sidebar right"></td>
           </tr>
           <tr class="max">
             <td class="sidebar left">Max</td>
-            <td class="column" ng:repeat="player in players">
+            <td class="column" ng-repeat="player in players">
               <div>
-                <span ng:show="!hasEnoughStats()">-</span>
-                <span ng:bind="get14DayMax()" ng:show="hasEnoughStats()"></span>
-                <span ng:bind-attr="{'data-rank' : '{{get14DayMaxRanking()}}'}" ng:show="hasEnoughStats()"></span>
+                <span ng-show="!hasEnoughStats(player)">-</span>
+                <span ng-bind="get14DayMax(player)" ng-show="hasEnoughStats(player)"></span>
+                <span ng-bind-attr="{'data-rank' : '{{get14DayMaxRanking(player)}}'}" ng-show="hasEnoughStats(player)"></span>
               </div>
             </td>
             <td class="sidebar right"></td>
@@ -58,31 +58,31 @@
       </table>
     </div>
 
-    <div class="score-entry" ng:controller="ScoreEntryCtrl">
-      <form ng:submit="submitScores()">
+    <div class="score-entry" ng-controller="ScoreEntryCtrl">
+      <form ng-submit="submitScores()">
         <table>
           <tbody>
             <td class="sidebar left">New Score</td>
-            <td class="column" ng:repeat="player in players">
-              <input type="text" ng:model="player.newScore" ng:disabled="{{isPeformingRequest()}}">
+            <td class="column" ng-repeat="player in players">
+              <input type="text" ng-model="player.newScore" ng-model-instant ng-disabled="{{isPeformingRequest()}}">
             </td>
-            <td class="sidebar right"><input type="submit" ng:disabled="{{players.length == 0 || isPeformingRequest()}}"></td>
+            <td class="sidebar right"><input type="submit" ng-disabled="{{players.length == 0 || isPeformingRequest()}}"></td>
           </tbody>
         </table>
       </form>
     </div>
 
-    <div class="score-history" ng:controller="PlayerScoresListCtrl">
+    <div class="score-history" ng-controller="PlayerScoresListCtrl">
       <table>
         <tbody>
           <tr>
             <td class="sidebar left">History</td>
-            <td class="column" ng:repeat="player in players">
+            <td class="column" ng-repeat="player in players">
               <table>
                 <tbody>
-                  <tr ng:repeat="score in getScores()">
-                    <td class="points" ng:bind="score.points"></td>
-                    <td class="date" ps:prettydate="score.date"></td>
+                  <tr ng-repeat="score in getScores(player)">
+                    <td class="points" ng-bind="score.points"></td>
+                    <td class="date" ps-pretty-date="score.date"></td>
                   </tr>
                 </tbody>
               </table>
