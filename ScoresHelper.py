@@ -20,7 +20,6 @@ class ScoresHelper:
   MIN_SCORE_COUNTS = {
     ScoreType.Mean14Day : 10,
     ScoreType.Max14Day : 1,
-    ScoreType.Count14Day : 1,
   }
   
   def __init__(self, playerId):
@@ -44,23 +43,27 @@ class ScoresHelper:
     return count
   
   def get14DayMean(self):
-    mckey = "player-%s-14-day-mean" % (self._playerId,)
-    score = memcache.get(mckey)
-    if score is None and self.count14DayScores() >= self.MIN_SCORE_COUNTS[ScoreType.Mean14Day]:
-      scores = self.get14DayScores()
-      if len(scores) > 0:
-        score = round(float(sum(scores))/len(scores))
-        memcache.add(mckey, score, self.CACHE_EXPIRY)
+    score = None
+    if self.count14DayScores() >= self.MIN_SCORE_COUNTS[ScoreType.Mean14Day]:
+      mckey = "player-%s-14-day-mean" % (self._playerId,)
+      score = memcache.get(mckey)
+      if score is None:
+        scores = self.get14DayScores()
+        if len(scores) > 0:
+          score = round(float(sum(scores))/len(scores))
+          memcache.add(mckey, score, self.CACHE_EXPIRY)
     return score
   
   def get14DayMax(self):
-    mckey = "player-%s-14-day-max" % (self._playerId,)
-    score = memcache.get(mckey)
-    if score is None and self.count14DayScores() >= self.MIN_SCORE_COUNTS[ScoreType.Max14Day]:
-      scores = self.get14DayScores()
-      if len(scores) > 0:
-        score = round(max(scores))
-        memcache.add(mckey, score, self.CACHE_EXPIRY)
+    score = None
+    if self.count14DayScores() >= self.MIN_SCORE_COUNTS[ScoreType.Max14Day]:
+      mckey = "player-%s-14-day-max" % (self._playerId,)
+      score = memcache.get(mckey)
+      if score is None:
+        scores = self.get14DayScores()
+        if len(scores) > 0:
+          score = round(max(scores))
+          memcache.add(mckey, score, self.CACHE_EXPIRY)
     return score
   
   def getScore(self, scoreType):
@@ -68,19 +71,15 @@ class ScoresHelper:
       return self.get14DayMean()
     elif scoreType == ScoreType.Max14Day:
       return self.get14DayMax()
+    elif scoreType == ScoreType.Count14Day:
+      return self.count14DayScores()
     return None
   
   def hasScores(self):
-    mckey = "player-%s-has-scores" % (self._playerId,)
-    has = memcache.get(mckey)
-    if has is None:
-      has = len(self.get14DayScores()) > 0
-      memcache.add(mckey, has, self.CACHE_EXPIRY)
-    return has
+    return self.count14DayScores() > 0
   
   def clearCache(self):
     memcache.delete_multi([
-      "player-%s-has-scores" % (self._playerId,),
       "player-%s-14-day-count" % (self._playerId,),
       "player-%s-14-day-mean" % (self._playerId,),
       "player-%s-14-day-max" % (self._playerId,),
