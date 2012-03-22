@@ -8,6 +8,7 @@ from google.appengine.api import memcache
 class ScoreType:
   Mean14Day = "Mean14Day"
   Max14Day = "Max14Day"
+  Count14Day = "Count14Day"
   
   @staticmethod
   def types():
@@ -16,6 +17,12 @@ class ScoreType:
 
 class ScoresHelper:
   CACHE_EXPIRY = 86400 # 1 day
+  MIN_SCORE_COUNTS = {
+    ScoreType.Mean14Day : 10,
+    ScoreType.Max14Day : 1,
+    ScoreType.Count14Day : 1,
+  }
+  
   def __init__(self, playerId):
     self._playerId = playerId
     self._scores14Days = None
@@ -28,10 +35,18 @@ class ScoresHelper:
       self._scores14Days = [s.points for s in results]
     return self._scores14Days
   
+  def count14DayScores(self, now = datetime.datetime.now()):
+    mckey = "player-%s-14-day-count" % (self._playerId,)
+    count = memcache.get(mckey)
+    if count is None:
+      count = len(self.get14DayScores())
+      memcache.add(mckey, count, self.CACHE_EXPIRY)
+    return count
+  
   def get14DayMean(self):
     mckey = "player-%s-14-day-mean" % (self._playerId,)
     score = memcache.get(mckey)
-    if score is None:
+    if score is None and self.count14DayScores() >= self.MIN_SCORE_COUNTS[ScoreType.Mean14Day]:
       scores = self.get14DayScores()
       if len(scores) > 0:
         score = round(float(sum(scores))/len(scores))
@@ -41,7 +56,7 @@ class ScoresHelper:
   def get14DayMax(self):
     mckey = "player-%s-14-day-max" % (self._playerId,)
     score = memcache.get(mckey)
-    if score is None:
+    if score is None and self.count14DayScores() >= self.MIN_SCORE_COUNTS[ScoreType.Max14Day]:
       scores = self.get14DayScores()
       if len(scores) > 0:
         score = round(max(scores))
@@ -66,6 +81,7 @@ class ScoresHelper:
   def clearCache(self):
     memcache.delete_multi([
       "player-%s-has-scores" % (self._playerId,),
+      "player-%s-14-day-count" % (self._playerId,),
       "player-%s-14-day-mean" % (self._playerId,),
       "player-%s-14-day-max" % (self._playerId,),
     ])

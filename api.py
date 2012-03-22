@@ -52,6 +52,7 @@ class PlayerScoreListHandler(webapp.RequestHandler):
     if scoresHelper.hasScores():
       stats['max-14-day'] = scoresHelper.get14DayMax()
       stats['mean-14-day'] = scoresHelper.get14DayMean()
+      stats['count-14-day'] = scoresHelper.count14DayScores()
     
     response = {'scores' : scores, 'stats' : stats}
     
@@ -60,7 +61,7 @@ class PlayerScoreListHandler(webapp.RequestHandler):
 class RankingsHandler(webapp.RequestHandler):
   def get(self):
     rankings = Rankings.getRankings()
-    keyMappings = {ScoreType.Mean14Day : 'mean-14-day', ScoreType.Max14Day : 'max-14-day'}
+    keyMappings = {ScoreType.Mean14Day : 'mean-14-day', ScoreType.Max14Day : 'max-14-day', ScoreType.Count14Day : 'count-14-day'}
     responseRankings = {}
     for scoreType in ScoreType.types():
       if keyMappings[scoreType] is not None:

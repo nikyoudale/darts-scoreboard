@@ -167,10 +167,6 @@ function PlayerStatsCtrl($scope, PlayerScoresService) {
   $scope.get14DayMeanRanking = function(player) {
     return PlayerScoresService.getPlayerRanking(player.id, 'mean-14-day');
   }
-  
-  $scope.hasEnoughStats = function(player) {
-    return PlayerScoresService.getCountOfPlayerScores(player.id) >= 5;
-  }
 }
 PlayerStatsCtrl.$inject = ['$scope', 'PlayerScoresService'];
 
