@@ -18,17 +18,18 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
 import os
+from LoginHelper import LoginHelper
 
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
-      if self.request.get('secret') == "udon":
-        path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
-        f = open(path)
-        self.response.out.write(f.read())
-        f.close()
-      else:
-        self.response.set_status(403)
+      if not LoginHelper.requestHasSecret(self.request): return self.response.set_status(403)
+      LoginHelper.responseAddSecretCookie(self.response)
+      
+      path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
+      f = open(path)
+      self.response.out.write(f.read())
+      f.close()
 
 application = webapp.WSGIApplication([('/', MainHandler)],
                                          debug=True)
