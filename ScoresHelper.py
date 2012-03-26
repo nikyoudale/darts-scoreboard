@@ -16,7 +16,7 @@ class ScoreType:
 
 
 class ScoresHelper:
-  CACHE_EXPIRY = 86400 # 1 day
+  CACHE_EXPIRY = 43200 # 12 hours
   MIN_SCORE_COUNTS = {
     ScoreType.Mean14Day : 10,
     ScoreType.Max14Day : 1,
