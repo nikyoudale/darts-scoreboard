@@ -26,10 +26,10 @@ class MainHandler(webapp.RequestHandler):
       if not LoginHelper.requestHasSecret(self.request): return self.response.set_status(403)
       LoginHelper.responseAddSecretCookie(self.response)
       
-      path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
+      path = os.path.join(os.path.dirname(__file__), 'index.html')
       f = open(path)
       self.response.out.write(f.read())
       f.close()
 
-application = webapp.WSGIApplication([('/', MainHandler)],
+application = webapp.WSGIApplication([('.*', MainHandler)],
                                          debug=True)
