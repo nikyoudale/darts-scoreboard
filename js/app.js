@@ -24,11 +24,11 @@ shortcut.add("right", function() {
 
 
 
-var possedartsModule = angular.module('possedarts', []);
+var possedartsModule = angular.module('possedarts', ['possedarts.stats']);
 
 possedartsModule.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
-  
+
   $routeProvider.when('/stats', {template: '/templates/stats.html'})
   $routeProvider.otherwise({template: '/templates/main.html'})
 }]);
@@ -58,7 +58,7 @@ function(PlayerScores, Rankings) {
   var statsByPlayerId = {};
   var rankingsByStat = {};
   var waitingRequestCount = 0;
-  
+
   return {
     submitScore: function(playerId, points, callbackFn) {
       waitingRequestCount++;
@@ -134,3 +134,4 @@ possedartsModule.directive('psPrettyDate', function() {
     });
   };
 });
+
