@@ -1,1 +1,5 @@
-<p>Stats go here</p>
+<div ng-controller="GraphCtrl">
+  <select ng-model="player" ng-options="player.name for player in players"></select>
+  <button ng-click="drawChart(player)">Go!</button>
+  <div id="chart_div"></div>
+</div>
