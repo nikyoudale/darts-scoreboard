@@ -1,12 +1,11 @@
 var possedartsStatsModule = angular.module('possedarts.stats', []);
 
-possedartsStatsModule.value('ready', false);
-
 /* This seems to need to run immediately, and can't run as part of the angular "run" configuration stage. */
 google.load('visualization', '1.0', {'packages':['corechart']});
-google.setOnLoadCallback(function() {
-    possedartsStatsModule.value('ready', true);
-});
+/* TODO(mike): use the callback */
+//google.setOnLoadCallback(function() {
+//    possedartsStatsModule.value('ready', true);
+//});
 
 function GraphCtrl($scope, Player, PlayerScoresService) {
 
@@ -17,10 +16,7 @@ function GraphCtrl($scope, Player, PlayerScoresService) {
   });
 
   $scope.drawChart = function(player) {
-    if (possedartsStatsModule.value('ready') == false) {
-      alert("Google Visualization API has not yet been loaded.");
-      return;
-    }
+    /* TODO(mike): check google visualization API has been loaded */
     var scores = PlayerScoresService.playerScores(player.id);
     var data = new google.visualization.DataTable();
     data.addColumn('date', 'Date');
